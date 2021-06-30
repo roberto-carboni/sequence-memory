@@ -1,6 +1,6 @@
 {
   "name": "sequence-memory",
-  "homepage": "https://github.com/roberto-carboni/sequence-memory",
+  "homepage": "https://roberto-carboni.github.io/sequence-memory",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
