@@ -34,9 +34,14 @@ function App() {
   };
 
   const speakSequence = (newSequence: number[]) => {
+    clearTimeout(timer.current);
+    setTimeLeft(allowedTime);
     const utterance = new SpeechSynthesisUtterance(
       `${newSequence.join('. ')}.`
     );
+    utterance.onend = () => {
+      countdown();
+    };
 
     speechSynthesis.speak(utterance);
   };
@@ -46,11 +51,7 @@ function App() {
   };
 
   const renderSequence = () => {
-    const hiddenSequence = sequence.map(() => '??');
-    if (showSequence) {
-      return sequence.join(' - ');
-    }
-    return hiddenSequence.join(' - ');
+    return sequence.join(' - ');
   };
 
   const setAnswer = (newValue: string, index: number) => {
@@ -95,23 +96,29 @@ function App() {
     });
 
   const countdown = () => {
-    if (timeLeft > 0) {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    } else {
-      clearInterval(timer.current);
-    }
+    setTimeLeft(allowedTime);
+    timer.current = setInterval(() => {
+      if (timeLeft > 0) {
+        setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      } else {
+        clearInterval(timer.current);
+      }
+    }, 1000);
   };
 
   useEffect(() => {
-    timer.current = setInterval(countdown, 1000);
     if (timeLeft === 0) {
       setShowSequence(false);
     }
-    return () => clearInterval(timer.current);
   }, [timeLeft]);
 
   useEffect(() => {
     generateSequence();
+    if (!spoken) {
+      countdown();
+    } else {
+      setShowSequence(false);
+    }
   }, [spoken]);
 
   const hideableItemsVisibility = timeLeft > 0 ? 'hidden' : 'initial';
@@ -156,7 +163,7 @@ function App() {
             </Grid>
           </Grid>
 
-          <Typography id='length-slider' gutterBottom>
+          <Typography id='seq-length-slider' gutterBottom>
             Sequence Length
           </Typography>
           <Slider
@@ -169,7 +176,7 @@ function App() {
             max={14}
             onChange={(_, newValue) => setSeqLength(newValue as number)}
           />
-          <Typography id='discrete-slider' gutterBottom>
+          <Typography id='countdown-duration-slider' gutterBottom>
             {`${spoken ? 'Lapsed' : 'Memorizing'} Time (secs):`}
           </Typography>
           <Slider
@@ -193,7 +200,7 @@ function App() {
 
         <p
           style={{
-            visibility: spoken ? 'hidden' : 'initial',
+            visibility: showSequence ? 'initial' : 'hidden',
           }}
         >
           {renderSequence()}
@@ -214,13 +221,7 @@ function App() {
           {renderResults()}
         </div>
 
-        <p
-          style={{
-            visibility: timer.current ? 'initial' : 'hidden',
-          }}
-        >
-          Time remaining: {timeLeft}
-        </p>
+        <p>Time remaining: {timeLeft}</p>
 
         <Button
           variant='contained'
