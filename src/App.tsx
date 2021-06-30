@@ -124,7 +124,9 @@ function App() {
         </div>
         <div
           className='answer-container'
-          style={{ visibility: hideableItemsVisibility }}
+          style={{
+            visibility: timeLeft === 0 && showSequence ? 'initial' : 'hidden',
+          }}
         >
           {renderResults()}
         </div>
