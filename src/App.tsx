@@ -39,10 +39,10 @@ function App() {
     const utterance = new SpeechSynthesisUtterance(
       `${newSequence.join('. ')}.`
     );
+    utterance.voice = speechSynthesis.getVoices()[2];
     utterance.onend = () => {
       countdown();
     };
-
     speechSynthesis.speak(utterance);
   };
 
