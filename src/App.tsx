@@ -8,6 +8,7 @@ import { Button, Grid, Slider, Typography } from '@material-ui/core';
 function App() {
   const [spoken, setSpoken] = useState(false);
   const [seqLengt, setSeqLength] = useState<number>(6);
+  const [maxRange, setMaxRange] = useState(99);
   const [sequence, setSequence] = useState<number[]>([]);
   const [showSequence, setShowSequence] = useState(true);
   const [allowedTime, setAllowedTime] = useState(30);
@@ -20,16 +21,18 @@ function App() {
     const newSequence = [];
     const newAnswers = [];
     for (let i = 0; i < seqLengt; i++) {
-      const number = Math.floor(Math.random() * 100);
+      const number = Math.floor(Math.random() * (maxRange + 1));
       newSequence.push(number);
       newAnswers.push(undefined);
     }
-    setShowSequence(true);
     setSequence(newSequence);
     setAnswers(newAnswers);
     setTimeLeft(allowedTime);
     if (spoken) {
       speakSequence(newSequence);
+      setShowSequence(false);
+    } else {
+      setShowSequence(true);
     }
   };
 
@@ -58,6 +61,11 @@ function App() {
     const newAnswers = [...answers];
     newAnswers[index] = parseInt(newValue);
     setAnswers(newAnswers);
+  };
+
+  const changeMaxRange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMax = parseInt(e.target.value);
+    setMaxRange(newMax);
   };
 
   const renderAnswers = (): ReactNode[] =>
@@ -176,6 +184,7 @@ function App() {
             max={14}
             onChange={(_, newValue) => setSeqLength(newValue as number)}
           />
+
           <Typography id='countdown-duration-slider' gutterBottom>
             {`${spoken ? 'Lapsed' : 'Memorizing'} Time (secs):`}
           </Typography>
@@ -189,6 +198,23 @@ function App() {
             max={60}
             onChange={(_, newValue) => setAllowedTime(newValue as number)}
           />
+
+          <Grid component='label' container alignItems='center' spacing={0}>
+            <Grid item>
+              <Typography id='seq-length-slider' gutterBottom>
+                Item Range: 1 to
+              </Typography>
+            </Grid>
+            <Grid item>
+              <input
+                type='number'
+                className='answer-input'
+                maxLength={2}
+                value={maxRange}
+                onChange={changeMaxRange}
+              />
+            </Grid>
+          </Grid>
         </div>
         <Button
           variant='contained'
