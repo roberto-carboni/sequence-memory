@@ -18,6 +18,7 @@ function App() {
   let timer = useRef<any>(undefined);
 
   const generateSequence = () => {
+    speechSynthesis.cancel();
     const newSequence = [];
     const newAnswers = [];
     for (let i = 0; i < seqLengt; i++) {
@@ -43,6 +44,11 @@ function App() {
       `${newSequence.join('. ')}.`
     );
     utterance.voice = speechSynthesis.getVoices()[2];
+    utterance.volume = 1;
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    console.log(utterance);
+
     utterance.onend = () => {
       countdown();
     };
@@ -202,7 +208,7 @@ function App() {
           <Grid component='label' container alignItems='center' spacing={0}>
             <Grid item>
               <Typography id='seq-length-slider' gutterBottom>
-                Item Range: 1 to
+                Item Range: 0 to
               </Typography>
             </Grid>
             <Grid item>
