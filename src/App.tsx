@@ -40,19 +40,13 @@ function App() {
   const speakSequence = (newSequence: number[]) => {
     clearTimeout(timer.current);
     setTimeLeft(allowedTime);
-    const utterance = new SpeechSynthesisUtterance(
-      `${newSequence.join('. ')}.`
-    );
-    utterance.voice = speechSynthesis.getVoices()[2];
-    utterance.volume = 1;
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    console.log(utterance);
+    const msg = new SpeechSynthesisUtterance(`${newSequence.join('. ')}.`);
+    msg.voice = speechSynthesis.getVoices()[2];
 
-    utterance.onend = () => {
+    msg.onend = () => {
       countdown();
     };
-    speechSynthesis.speak(utterance);
+    speechSynthesis.speak(msg);
   };
 
   const revealSequence = () => {
