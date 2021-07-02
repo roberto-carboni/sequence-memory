@@ -41,13 +41,22 @@ function App() {
   const speakSequence = (newSequence: number[]) => {
     clearTimeout(timer.current);
     setTimeLeft(allowedTime);
-    const msg = new SpeechSynthesisUtterance(`${newSequence.join('. ')}.`);
+
+    speechLoop(newSequence, 0);
+  };
+
+  const speechLoop = (newSequence: number[], index: number) => {
+    const msg = new SpeechSynthesisUtterance(newSequence[index].toString());
     msg.voice = speechSynthesis.getVoices()[2];
-    msg.rate = speed;
 
     msg.onend = () => {
-      countdown();
+      if (index + 1 === newSequence.length) {
+        countdown();
+      } else {
+        setTimeout(() => speechLoop(newSequence, index + 1), speed * 1000);
+      }
     };
+
     speechSynthesis.speak(msg);
   };
 
@@ -232,8 +241,8 @@ function App() {
               valueLabelDisplay='auto'
               step={0.1}
               marks
-              min={0.5}
-              max={1.5}
+              min={0.8}
+              max={2}
               onChange={(_, newValue) => setSpeed(newValue as number)}
             />
           </div>
