@@ -48,11 +48,16 @@ function App() {
   const speechLoop = (newSequence: number[], index: number) => {
     const msg = new SpeechSynthesisUtterance(newSequence[index].toString());
     msg.voice = speechSynthesis.getVoices()[2];
+    console.log(msg);
 
     msg.onend = () => {
       if (index + 1 === newSequence.length) {
         countdown();
-      } else {
+      }
+    };
+
+    msg.onstart = () => {
+      if (index + 1 < newSequence.length) {
         setTimeout(() => speechLoop(newSequence, index + 1), speed * 1000);
       }
     };
