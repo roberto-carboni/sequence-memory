@@ -14,6 +14,7 @@ function App() {
   const [allowedTime, setAllowedTime] = useState(30);
   const [timeLeft, setTimeLeft] = useState(allowedTime);
   const [answers, setAnswers] = useState<(number | undefined)[]>([]);
+  const [speed, setSpeed] = useState(1);
 
   let timer = useRef<any>(undefined);
 
@@ -42,6 +43,7 @@ function App() {
     setTimeLeft(allowedTime);
     const msg = new SpeechSynthesisUtterance(`${newSequence.join('. ')}.`);
     msg.voice = speechSynthesis.getVoices()[2];
+    msg.rate = speed;
 
     msg.onend = () => {
       countdown();
@@ -215,7 +217,28 @@ function App() {
               />
             </Grid>
           </Grid>
+
+          <div
+            style={{
+              visibility: spoken ? 'initial' : 'hidden',
+            }}
+          >
+            <Typography id='countdown-duration-slider' gutterBottom>
+              Speech Speed
+            </Typography>
+            <Slider
+              defaultValue={speed}
+              value={speed}
+              valueLabelDisplay='auto'
+              step={0.1}
+              marks
+              min={0.5}
+              max={1.5}
+              onChange={(_, newValue) => setSpeed(newValue as number)}
+            />
+          </div>
         </div>
+
         <Button
           variant='contained'
           color='secondary'
